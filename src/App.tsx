@@ -11,11 +11,11 @@ import "./App.css";
 import PlayerList from "./components/PlayerList";
 import Player from "./components/Player";
 
-// TODO: use empty array
-// const btnValues = Array(9).fill(null);
-const initialGameBoard: (number | string)[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const NUMBER_OF_FIELDS = 9;
+const initialGameBoard = Array(NUMBER_OF_FIELDS).fill(null);
 
 export default function App() {
+  const [history, setHistory] = useState(initialGameBoard);
   const [isGameActive, setIsGameActive] = useState(false);
   const [activePlayer, setActivePlayer] = useState("X");
   const [isGameOver, setGameOver] = useState(false);
@@ -27,18 +27,23 @@ export default function App() {
   }
 
   function handleSelectClick(event) {
-    const currentValue = event.target.value;
-    const index = initialGameBoard.indexOf(+currentValue);
+    // 1. get index of clicked button
+    const index = event.target.id;
 
-    if (activePlayer === "X") {
-      initialGameBoard[index] = "X";
-      if (calculateWinner(initialGameBoard, activePlayer)) setGameOver(true);
-      setActivePlayer("O");
-    } else {
-      initialGameBoard[index] = "O";
-      if (calculateWinner(initialGameBoard, activePlayer)) setGameOver(true);
-      setActivePlayer("X");
-    }
+    // 2a. create new array
+    const newScore = [...history];
+
+    // 2b. mutate new array at index - add value "X" or "O"
+    newScore[index] = activePlayer;
+
+    // 3. set new score
+    setHistory(newScore);
+
+    // 4. check if a player wins - use newScore instead of history (history is not updated yet)
+    if (calculateWinner(newScore, activePlayer)) setGameOver(true);
+
+    // 5. switch players
+    setActivePlayer(activePlayer === "X" ? "O" : "X");
   }
 
   return (
@@ -50,11 +55,12 @@ export default function App() {
       </PlayerList>
 
       <Board>
-        {initialGameBoard.flat().map((value, index) => {
+        {history.map((value, index) => {
           return (
             <Field
               disabled={disabled}
               key={index}
+              id={index}
               onClick={handleSelectClick}
               value={value}
             >

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Field({ disabled, onClick, value, children }) {
+export default function Field({ disabled, onClick, value, id, children }) {
   const [isSelected, setIsSelected] = useState(false);
 
   function handleSelectClick(event) {
@@ -20,6 +20,7 @@ export default function Field({ disabled, onClick, value, children }) {
       disabled={disabled}
       onClick={handleSelectClick}
       value={value}
+      id={id}
       type="button"
     >
       {children}
