@@ -90,3 +90,7 @@ button:focus-visible {
 .player-name {
   font-weight: bold;
 }
+
+.active {
+  background-color: #444;
+}

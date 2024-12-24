@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Player({ initialName, symbol }) {
+export default function Player({ initialName, symbol, isActive }) {
   const [isEditing, setIsEditing] = useState(false);
   const [playerName, setPlayerName] = useState(initialName);
 
@@ -21,7 +21,7 @@ export default function Player({ initialName, symbol }) {
   useEffect(() => console.log("Effect renders"), [isEditing]);
 
   return (
-    <li className="list-item">
+    <li className={`list-item ${isActive ? "active" : undefined}`}>
       {!isEditing && <p className="player-name">{playerName}</p>}
       {isEditing && (
         <form onSubmit={handleSubmit}>
