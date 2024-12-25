@@ -1,7 +1,23 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
-export default function Field({ disabled, onClick, value, id, children }) {
+interface FieldProps {
+  disabled: boolean;
+  onClick: (event: { target: { id: string } }) => void;
+  value: string;
+  id: number;
+  children: ReactNode;
+}
+
+export default function Field({
+  disabled,
+  onClick,
+  value,
+  id,
+  children,
+}: FieldProps) {
   const [isSelected, setIsSelected] = useState(false);
+
+  const buttonId = id.toString();
 
   function handleSelectClick(event) {
     setIsSelected(true);
@@ -20,7 +36,7 @@ export default function Field({ disabled, onClick, value, id, children }) {
       disabled={disabled}
       onClick={handleSelectClick}
       value={value}
-      id={id}
+      id={buttonId}
       type="button"
     >
       {children}

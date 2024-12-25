@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { calculateWinner } from "./utils/winner";
 
 import Title from "./components/Title";
 import Board from "./components/Board";
 import Field from "./components/Field";
 import StartButton from "./components/StartButton";
+import PlayerList from "./components/PlayerList";
+import Player from "./components/Player";
 import Message from "./components/Message";
 
 import "./App.css";
-import PlayerList from "./components/PlayerList";
-import Player from "./components/Player";
+import { calculateWinner } from "./utils/winner";
 
 const NUMBER_OF_FIELDS = 9;
 const initialGameBoard = Array(NUMBER_OF_FIELDS).fill(null);
@@ -21,12 +21,13 @@ export default function App() {
   const [isGameOver, setGameOver] = useState(false);
 
   const disabled = !isGameActive;
+  const winnerName = activeSymbol;
 
   function handleStartClick() {
     setIsGameActive((state) => !state);
   }
 
-  function handleSelectClick(event) {
+  function handleSelectClick(event: { target: { id: string } }) {
     if (isGameOver) {
       return;
     }
@@ -36,9 +37,8 @@ export default function App() {
     const index = parseInt(event.target.id);
 
     // *********************************************
-    // WARNING: step 2b is not recommend
-    // is does work here because it is a flat array
-    // problems can occur when updating objects in an array
+    // WARNING: step 2b is not recommended
+    // problems occur when mutating objects in an array
     // https://react.dev/learn/updating-arrays-in-state#updating-objects-inside-arrays:~:text=Updating%20objects%20inside%20arrays
 
     // 2a. create new array
@@ -48,7 +48,7 @@ export default function App() {
     // newScore[index] = activeSymbol;
     // *********************************************
 
-    // mutate new array at index i
+    // 2. creat new array, add value at index i
     const newScore = history.map((item, i) => {
       if (index === i) {
         return activeSymbol;
@@ -57,14 +57,13 @@ export default function App() {
       }
     });
 
-    console.log(newScore);
-
     // 3. set new score
     setHistory(newScore);
 
     // 4. check if a player wins - use newScore instead of history (history is not updated yet)
     if (calculateWinner(newScore, activeSymbol)) {
       setGameOver(true);
+      getWinner();
       return;
     }
 
@@ -72,8 +71,13 @@ export default function App() {
     setActiveSymbol((currentActiveSymbol) =>
       currentActiveSymbol === "X" ? "O" : "X"
     );
+  }
 
-    // 6. switch player
+  function getWinner() {
+    // get active Symbol - "X"
+    // const player = activeSymbol;
+    // look into Player component - symbol="X"
+    // take the value (playerName)
   }
 
   return (
@@ -107,7 +111,7 @@ export default function App() {
           );
         })}
       </Board>
-      {isGameOver && <Message title="You win" />}
+      {isGameOver && <Message title="You win" winnerName={winnerName} />}
       {!isGameActive && <StartButton onClick={handleStartClick} />}
     </>
   );

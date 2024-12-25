@@ -9,12 +9,12 @@ const lines = [
   [2, 4, 6],
 ];
 
-export function calculateWinner(currentValues, player) {
-  for (const item of lines) {
+export function calculateWinner(currentValues, playerSymbol) {
+  for (const line of lines) {
     const win = [];
-    for (const index of item) {
+    for (const index of line) {
       const value = currentValues[index];
-      if (value === player) win.push("val");
+      if (value === playerSymbol) win.push(playerSymbol);
       if (win.length === 3) return true;
     }
   }

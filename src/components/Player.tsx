@@ -1,6 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export default function Player({ initialName, symbol, isActive }) {
+interface PlayerProps {
+  initialName: string;
+  symbol: string;
+  isActive: boolean;
+}
+
+export default function Player({ initialName, symbol, isActive }: PlayerProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [playerName, setPlayerName] = useState(initialName);
 
@@ -17,8 +23,6 @@ export default function Player({ initialName, symbol, isActive }) {
   function handleEditClick() {
     setIsEditing((wasEditing) => !wasEditing);
   }
-
-  useEffect(() => console.log("Effect renders"), [isEditing]);
 
   return (
     <li className={`list-item ${isActive ? "active" : undefined}`}>
