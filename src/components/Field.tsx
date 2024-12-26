@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 
 interface FieldProps {
   disabled: boolean;
-  onClick: (event: { target: { id: string } }) => void;
+  onClick: (id: string) => void;
   value: string;
   id: number;
   children: ReactNode;
@@ -19,9 +19,9 @@ export default function Field({
 
   const buttonId = id.toString();
 
-  function handleSelectClick(event) {
+  function handleClick(id: string) {
     setIsSelected(true);
-    onClick(event);
+    onClick(id);
   }
 
   if (isSelected)
@@ -34,7 +34,7 @@ export default function Field({
   return (
     <button
       disabled={disabled}
-      onClick={handleSelectClick}
+      onClick={() => handleClick(buttonId)}
       value={value}
       id={buttonId}
       type="button"

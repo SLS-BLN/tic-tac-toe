@@ -9,7 +9,10 @@ const lines = [
   [2, 4, 6],
 ];
 
-export function calculateWinner(currentValues, playerSymbol) {
+export function calculateWinner(
+  currentValues: (number | string)[],
+  playerSymbol: string
+): boolean {
   for (const line of lines) {
     const win = [];
     for (const index of line) {
@@ -18,4 +21,5 @@ export function calculateWinner(currentValues, playerSymbol) {
       if (win.length === 3) return true;
     }
   }
+  return false;
 }

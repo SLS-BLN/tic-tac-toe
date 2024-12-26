@@ -27,14 +27,14 @@ export default function App() {
     setIsGameActive((state) => !state);
   }
 
-  function handleSelectClick(event: { target: { id: string } }) {
+  function handleSelectClick(id: string) {
     if (isGameOver) {
       return;
     }
 
     // 1. get index of clicked button
     // note: convert to number is neccesary - id is a string
-    const index = parseInt(event.target.id);
+    const index = parseInt(id);
 
     // *********************************************
     // WARNING: step 2b is not recommended
