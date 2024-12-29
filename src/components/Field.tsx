@@ -26,7 +26,7 @@ export default function Field({
 
   if (isSelected)
     return (
-      <button disabled className="selected" type="button">
+      <button disabled className="selected" type="button" id={buttonId}>
         {value}
       </button>
     );

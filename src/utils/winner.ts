@@ -10,7 +10,7 @@ const lines = [
 ];
 
 export function calculateWinner(
-  currentValues: (number | string)[],
+  currentValues: (number | string | null)[],
   playerSymbol: string
 ): boolean {
   for (const line of lines) {
@@ -22,4 +22,9 @@ export function calculateWinner(
     }
   }
   return false;
+}
+
+export function checkDraw(currentValues: (number | string | null)[]) {
+  const findNullValues = currentValues.filter((item) => item === null);
+  if (findNullValues.length === 0) return true;
 }

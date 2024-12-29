@@ -9,22 +9,40 @@ import Player from "./components/Player";
 import Message from "./components/Message";
 
 import "./App.css";
-import { calculateWinner } from "./utils/winner";
+import { calculateWinner, checkDraw } from "./utils/winner";
+import Button from "./components/Button";
 
 const NUMBER_OF_FIELDS = 9;
-const initialGameBoard = Array(NUMBER_OF_FIELDS).fill(null);
+const START_SYMBOL = "@";
+const INITIAL_BOARD_GAME = Array(NUMBER_OF_FIELDS).fill(null);
+const INITIAL_PLAYERS = {
+  X: "Player 1",
+  O: "Player 2",
+};
 
 export default function App() {
-  const [history, setHistory] = useState(initialGameBoard);
+  // TODO: derive state where possible
+  // set up new branch - use Context API or Redux for state
+  const [history, setHistory] = useState(INITIAL_BOARD_GAME);
   const [isGameActive, setIsGameActive] = useState(false);
-  const [activeSymbol, setActiveSymbol] = useState("X");
+  const [activeSymbol, setActiveSymbol] = useState<"X" | "O">("X");
   const [isGameOver, setGameOver] = useState(false);
+  const [players, setPlayers] = useState(INITIAL_PLAYERS);
+  const [winner, setWinner] = useState("");
 
   const disabled = !isGameActive;
-  const winnerName = activeSymbol;
 
   function handleStartClick() {
-    setIsGameActive((state) => !state);
+    setIsGameActive(true);
+  }
+
+  function handleResetClick() {
+    setIsGameActive(true);
+    setGameOver(false);
+    setActiveSymbol("X");
+    setWinner("");
+    const reset = [...history.map(() => null)];
+    setHistory(reset);
   }
 
   function handleSelectClick(id: string) {
@@ -61,9 +79,20 @@ export default function App() {
     setHistory(newScore);
 
     // 4. check if a player wins - use newScore instead of history (history is not updated yet)
+    // TODO: handle draw
+    // what condition must be met?
+    // no winner & no null in history
+
     if (calculateWinner(newScore, activeSymbol)) {
       setGameOver(true);
-      getWinner();
+      setIsGameActive(false);
+      getWinner(players, activeSymbol);
+      return;
+    }
+
+    if (checkDraw(newScore)) {
+      setGameOver(true);
+      setIsGameActive(false);
       return;
     }
 
@@ -73,11 +102,16 @@ export default function App() {
     );
   }
 
-  function getWinner() {
-    // get active Symbol - "X"
-    // const player = activeSymbol;
-    // look into Player component - symbol="X"
-    // take the value (playerName)
+  function getWinner(players: { X: string; O: string }, symbol: "X" | "O") {
+    setWinner(players[symbol]);
+    return;
+  }
+
+  function getPlayerNames(symbol: string, playerName: string) {
+    setPlayers({
+      ...players,
+      [symbol]: playerName,
+    });
   }
 
   return (
@@ -85,33 +119,50 @@ export default function App() {
       <Title text="Tic Tac Toe" />
       <PlayerList>
         <Player
-          initialName="Player 1"
+          initialName={players.X}
           symbol="X"
           isActive={!disabled && activeSymbol === "X"}
+          getPlayerNames={getPlayerNames}
         />
         <Player
-          initialName="Player 2"
+          initialName={players.O}
           symbol="O"
           isActive={!disabled && activeSymbol === "O"}
+          getPlayerNames={getPlayerNames}
         />
       </PlayerList>
 
       <Board>
+        {isGameOver && winner !== "" && (
+          <Message title="You win" winner={winner}>
+            <Button onClick={handleResetClick} text="Reset" />
+          </Message>
+        )}
+        {isGameOver && !isGameActive && winner === "" && (
+          <Message title="It's a draw">
+            <Button onClick={handleResetClick} text="Try again" />
+          </Message>
+        )}
         {history.map((value, index) => {
           return (
-            <Field
-              disabled={disabled}
-              key={index}
-              id={index}
-              onClick={handleSelectClick}
-              value={value}
-            >
-              @
-            </Field>
+            // component is destroyed when the game is over
+            // this is neccessary to reset the isSeleceted state
+            // https://react.dev/learn/preserving-and-resetting-state
+            !isGameOver && (
+              <Field
+                disabled={disabled}
+                key={index}
+                id={index}
+                onClick={handleSelectClick}
+                value={value}
+              >
+                {START_SYMBOL}
+              </Field>
+            )
           );
         })}
       </Board>
-      {isGameOver && <Message title="You win" winnerName={winnerName} />}
+
       {!isGameActive && <StartButton onClick={handleStartClick} />}
     </>
   );

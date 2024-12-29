@@ -1,16 +1,26 @@
+import { ReactNode } from "react";
+
 interface MessageProps {
   title: string;
   text?: string;
-  winnerName: string;
+  winner?: string;
+  children: ReactNode;
 }
 
-export default function Message({ title, text, winnerName }: MessageProps) {
+export default function Message({
+  title,
+  text,
+  winner = "",
+  children,
+}: MessageProps) {
   return (
-    <>
+    <dialog open>
       <h2>
-        {title}, {winnerName}!
+        {title}
+        {winner && `, ${winner}`}!
       </h2>
       <p>{text}</p>
-    </>
+      {children}
+    </dialog>
   );
 }

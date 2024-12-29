@@ -1,4 +1,8 @@
-export default function StartButton({ onClick }) {
+interface StartButtonProps {
+  onClick: () => void;
+}
+
+export default function StartButton({ onClick }: StartButtonProps) {
   function handleClick() {
     onClick();
   }
