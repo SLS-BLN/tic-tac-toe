@@ -20,20 +20,12 @@ const INITIAL_PLAYERS = {
 };
 
 export default function App() {
-  // state management is too complex - 6x useState
-  // TODO: set up new branch - use Context API or Redux for state
   const [history, setHistory] = useState(INITIAL_BOARD_GAME);
   const [isGameActive, setIsGameActive] = useState(false);
   const [activeSymbol, setActiveSymbol] = useState<"X" | "O">("X");
   const [players, setPlayers] = useState(INITIAL_PLAYERS);
-
-  // TODO: derive state
-
-  // when is the game over?
-  //
-
-  const [isGameOver, setGameOver] = useState(false); // isGameActive or history
-  const [winner, setWinner] = useState(""); // history
+  const [isGameOver, setGameOver] = useState(false);
+  const [winner, setWinner] = useState("");
 
   const disabled = !isGameActive;
 
@@ -55,23 +47,7 @@ export default function App() {
       return;
     }
 
-    // 1. get index of clicked button
-    // note: convert to number is neccesary - id is a string
     const index = parseInt(id);
-
-    // *********************************************
-    // WARNING: step 2b is not recommended
-    // problems occur when mutating objects in an array
-    // https://react.dev/learn/updating-arrays-in-state#updating-objects-inside-arrays:~:text=Updating%20objects%20inside%20arrays
-
-    // 2a. create new array
-    // const newScore = [...history];
-
-    // 2b. mutate new array at index - add value "X" or "O"
-    // newScore[index] = activeSymbol;
-    // *********************************************
-
-    // 2. creat new array, add value at index i
     const newScore = history.map((item, i) => {
       if (index === i) {
         return activeSymbol;
@@ -80,38 +56,33 @@ export default function App() {
       }
     });
 
-    // 3. set new score
     setHistory(newScore);
-
-    // TODO: code duplication - refactor steps 4a. and 4b.
-    // 4a. check if a player wins - use newScore instead of history (history is not updated yet)
-    if (calculateWinner(newScore, activeSymbol)) {
-      setGameOver(true);
-      setIsGameActive(false);
-      getWinner(players, activeSymbol);
-      return;
-    }
-
-    // 4b. check if there is no winner
-    if (checkDraw(newScore)) {
-      setGameOver(true);
-      setIsGameActive(false);
-      return;
-    }
-
-    // 5. switch player symbol
+    checkWinOrDraw(newScore);
     setActiveSymbol((currentActiveSymbol) =>
       currentActiveSymbol === "X" ? "O" : "X"
     );
   }
 
-  // TODO: refactor - move to utils
+  function checkWinOrDraw(score: (number | string | null)[]) {
+    const hasWinner = calculateWinner(score, activeSymbol);
+    const hasDraw = checkDraw(score);
+
+    if (hasWinner) {
+      getWinner(players, activeSymbol);
+    }
+
+    if (hasDraw || hasWinner) {
+      setGameOver(true);
+      setIsGameActive(false);
+      return;
+    }
+  }
+
   function getWinner(players: { X: string; O: string }, symbol: "X" | "O") {
     setWinner(players[symbol]);
     return;
   }
 
-  // TODO: refactor - move to utils
   function getPlayerNames(symbol: string, playerName: string) {
     setPlayers({
       ...players,
@@ -150,8 +121,8 @@ export default function App() {
         )}
         {history.map((value, index) => {
           return (
-            // component is destroyed when the game is over
-            // this is neccessary to reset the isSeleceted state
+            // all field components are destroyed when the game is over
+            // this is neccessary to reset the isSeleceted state in every field component
             // https://react.dev/learn/preserving-and-resetting-state
             !isGameOver && (
               <Field
@@ -167,8 +138,6 @@ export default function App() {
           );
         })}
       </Board>
-
-      {/* TODO: use Button instead of StartButton */}
       {!isGameActive && <Button onClick={handleStartClick} text="Start Game" />}
     </>
   );
