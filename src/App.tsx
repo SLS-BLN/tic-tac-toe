@@ -3,7 +3,6 @@ import { useState } from "react";
 import Title from "./components/Title";
 import Board from "./components/Board";
 import Field from "./components/Field";
-import StartButton from "./components/StartButton";
 import PlayerList from "./components/PlayerList";
 import Player from "./components/Player";
 import Message from "./components/Message";
@@ -21,14 +20,20 @@ const INITIAL_PLAYERS = {
 };
 
 export default function App() {
-  // TODO: derive state where possible
-  // set up new branch - use Context API or Redux for state
+  // state management is too complex - 6x useState
+  // TODO: set up new branch - use Context API or Redux for state
   const [history, setHistory] = useState(INITIAL_BOARD_GAME);
   const [isGameActive, setIsGameActive] = useState(false);
   const [activeSymbol, setActiveSymbol] = useState<"X" | "O">("X");
-  const [isGameOver, setGameOver] = useState(false);
   const [players, setPlayers] = useState(INITIAL_PLAYERS);
-  const [winner, setWinner] = useState("");
+
+  // TODO: derive state
+
+  // when is the game over?
+  //
+
+  const [isGameOver, setGameOver] = useState(false); // isGameActive or history
+  const [winner, setWinner] = useState(""); // history
 
   const disabled = !isGameActive;
 
@@ -78,11 +83,8 @@ export default function App() {
     // 3. set new score
     setHistory(newScore);
 
-    // 4. check if a player wins - use newScore instead of history (history is not updated yet)
-    // TODO: handle draw
-    // what condition must be met?
-    // no winner & no null in history
-
+    // TODO: code duplication - refactor steps 4a. and 4b.
+    // 4a. check if a player wins - use newScore instead of history (history is not updated yet)
     if (calculateWinner(newScore, activeSymbol)) {
       setGameOver(true);
       setIsGameActive(false);
@@ -90,6 +92,7 @@ export default function App() {
       return;
     }
 
+    // 4b. check if there is no winner
     if (checkDraw(newScore)) {
       setGameOver(true);
       setIsGameActive(false);
@@ -102,11 +105,13 @@ export default function App() {
     );
   }
 
+  // TODO: refactor - move to utils
   function getWinner(players: { X: string; O: string }, symbol: "X" | "O") {
     setWinner(players[symbol]);
     return;
   }
 
+  // TODO: refactor - move to utils
   function getPlayerNames(symbol: string, playerName: string) {
     setPlayers({
       ...players,
@@ -163,7 +168,8 @@ export default function App() {
         })}
       </Board>
 
-      {!isGameActive && <StartButton onClick={handleStartClick} />}
+      {/* TODO: use Button instead of StartButton */}
+      {!isGameActive && <Button onClick={handleStartClick} text="Start Game" />}
     </>
   );
 }
