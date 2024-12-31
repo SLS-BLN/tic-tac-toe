@@ -3,7 +3,6 @@
 `function handleSelectClick`
 
 step 2b is not recommended
-problems occur when mutating objects in an array
 [React Docs](https://react.dev/learn/updating-arrays-in-state#updating-objects-inside-arrays:~:text=Updating%20objects%20inside%20arrays)
 
 ```JS
