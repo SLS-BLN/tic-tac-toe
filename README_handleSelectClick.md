@@ -18,7 +18,7 @@ newScore[index] = activeSymbol;
 No mutation:
 
 ```JS
-// 2. creat new array, add value at index i
+// 2. create new array, add value at index i
 const newScore = history.map((item, i) => {
   if (index === i) {
     return activeSymbol
